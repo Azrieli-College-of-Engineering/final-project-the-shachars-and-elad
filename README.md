@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Advanced Web Security Lab
 
 **Intentionally Vulnerable & Secured Web Application**
@@ -170,56 +171,3 @@ From the `exploits/` directory (with the vulnerable server running):
 
 ```bash
 cd exploits
-python attack_regex.py
-python attack_time.py
-python attack_mass_assignment.py
-python attack_account_takeover.py
-python attack_race_condition.py
-```
-
-Each script performs real exploitation against the running vulnerable server.
-
----
-
-## Fixed Server – Security Measures
-
-The fixed server addresses all of the above issues:
-
-- **Input validation** – Strict server-side validation
-- **Field whitelisting** – Only allowed fields are applied on update
-- **Authorization** – Proper checks before sensitive operations
-- **Password reset** – Secure mechanism, not controllable via mass assignment
-- **Concurrency** – Atomic operations and race-condition prevention
-- **AI usage** – Output validation; human-in-the-loop for sensitive actions; clear separation between advisory AI and execution logic
-
----
-
-## Ethical Disclaimer
-
-This project is for **academic and educational purposes only**.
-
-- **Do not** deploy this system in production.
-- **Do not** use these techniques on systems you do not own or have explicit permission to test.
-- Use only in isolated lab environments.
-
----
-
-## Summary
-
-This lab illustrates that:
-
-- Web vulnerabilities often come from **architecture and business logic**, not only from “bad input.”
-- Modern apps introduce new risks (e.g. **AI** and **concurrency**).
-- Effective security requires **server-side enforcement** and **holistic design**.
-
----
-
-## References
-
-- [OWASP Top 10 Web Application Security Risks](https://owasp.org/www-project-top-ten/)
-- [OWASP NoSQL Injection](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_NoSQL_Injection)
-- [OWASP Mass Assignment](https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html)
-- [OWASP Top 10 for Large Language Model Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
-- [MongoDB Security](https://www.mongodb.com/docs/manual/security/)
-- [CWE-20: Improper Input Validation](https://cwe.mitre.org/data/definitions/20.html)
-- [CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')](https://cwe.mitre.org/data/definitions/362.html)
