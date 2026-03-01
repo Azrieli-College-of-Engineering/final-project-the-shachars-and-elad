@@ -4,14 +4,18 @@
 
 An academic security lab designed to demonstrate real-world web application vulnerabilities, their exploitation in practice, and corresponding secure implementations.
 
+**Instructors / first-time setup:** See **[Quick Start from Zero](#quick-start-from-zero)** for step-by-step instructions to run the entire lab from a clean environment.
+
 ---
 
 ## Table of Contents
 
+- [Quick Start from Zero](#quick-start-from-zero) *(for instructors / first-time setup)*
 - [Project Description](#project-description)
 - [Project Structure](#project-structure)
 - [Environment & Technologies](#environment--technologies)
 - [Running the Project](#running-the-project)
+- [Ports & URLs](#ports--urls)
 - [The Two Servers](#the-two-servers)
 - [Vulnerabilities & POC Scripts](#vulnerabilities--poc-scripts)
 - [Running the Attacks (POC)](#running-the-attacks-poc)
@@ -19,6 +23,122 @@ An academic security lab designed to demonstrate real-world web application vuln
 - [Ethical Disclaimer](#ethical-disclaimer)
 - [Summary](#summary)
 - [References](#references)
+
+---
+
+## Quick Start from Zero
+
+This section describes how to run the entire lab from scratch. Follow the steps in order.
+
+### Step 1: Prerequisites
+
+Install the following on your machine:
+
+| Requirement | Purpose | How to verify |
+|-------------|---------|----------------|
+| **Docker** + **Docker Compose** | Run MongoDB in a container | `docker --version` and `docker compose version` |
+| **Node.js** (v18+ recommended) | Run the backend servers | `node --version` |
+| **Python 3** (3.8+) | Run the exploit POC scripts | `python --version` or `python3 --version` |
+
+### Step 2: Get the project
+
+Open a terminal and go to the project folder:
+
+```bash
+cd path/to/advanced-sec-lab
+```
+
+*(Replace `path/to/advanced-sec-lab` with the actual path where the project is located.)*
+
+### Step 3: Start MongoDB
+
+From the **project root** (`advanced-sec-lab/`), start MongoDB with Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+Wait until the container is running. Check with:
+
+```bash
+docker compose ps
+```
+
+You should see the `mongo` service running. Leave this terminal as-is (MongoDB keeps running in the background).
+
+### Step 4: Install Node.js dependencies
+
+In the **project root**, install dependencies once:
+
+```bash
+npm install
+```
+
+### Step 5: Start the backend servers
+
+You need **two** terminal windows (or tabs), both in the project root.
+
+**Terminal A – Vulnerable server (port 5000):**
+
+```bash
+npm run start:vuln
+```
+
+Wait until you see: `Server running: http://localhost:5000` and `Database Connected`. Leave this terminal open.
+
+**Terminal B – Fixed server (port 5001):**
+
+```bash
+npm run start:fixed
+```
+
+Wait until you see: `Fixed Server: http://localhost:5001` and `Fixed DB Connected`. Leave this terminal open.
+
+### Step 6: Open the frontend
+
+**Option A – Open the HTML file directly:**  
+Double-click `frontend/index.html` or open it in your browser (e.g. `file:///.../advanced-sec-lab/frontend/index.html`).
+
+**Option B – Serve via a simple HTTP server (recommended):**  
+In a **third** terminal, from the project root:
+
+```bash
+npx serve frontend -p 3000
+```
+
+Then open in your browser: **http://localhost:3000**
+
+In the UI you can switch between **Vulnerable** (port 5000) and **Fixed** (port 5001) to compare behavior.
+
+### Step 7: Run the exploit scripts (optional)
+
+To demonstrate the attacks against the **vulnerable** server, use a **new** terminal. Make sure the vulnerable server (Terminal A) and MongoDB are still running.
+
+```bash
+cd exploits
+python attack_regex.py
+python attack_time.py
+python attack_mass_assignment.py
+python attack_account_takeover.py
+python attack_race_condition.py
+```
+
+*(On some systems use `python3` instead of `python`.)*
+
+Each script targets the vulnerable server on port 5000 by default.
+
+### Summary – what runs where
+
+| Step | Command / action | Where |
+|------|------------------|--------|
+| 1 | `docker compose up -d` | Project root |
+| 2 | `npm install` | Project root |
+| 3 | `npm run start:vuln` | Project root (Terminal A) |
+| 4 | `npm run start:fixed` | Project root (Terminal B) |
+| 5 | Open `frontend/index.html` or `npx serve frontend -p 3000` | Browser / Terminal C |
+| 6 | `python attack_*.py` | From `exploits/` folder |
+
+To **stop** the lab: press `Ctrl+C` in each terminal running the servers, then run `docker compose down` in the project root to stop MongoDB.
 
 ---
 
@@ -88,23 +208,31 @@ advanced-sec-lab/
 
 ### Prerequisites
 
-- **Docker** + **Docker Compose**
+- **Docker** + **Docker Compose** (for MongoDB)
+- **Node.js** (for backend servers)
 - **Python 3** (for attack scripts)
 
-### Start the environment
+### Start the environment (short version)
 
-From the project root directory:
+1. **MongoDB:** `docker compose up -d`
+2. **Dependencies:** `npm install`
+3. **Backends:** In two terminals: `npm run start:vuln` and `npm run start:fixed`
+4. **Frontend:** Open `frontend/index.html` or run `npx serve frontend -p 3000`
 
-```bash
-docker-compose up --build
-```
+For full step-by-step instructions from a clean machine, see [Quick Start from Zero](#quick-start-from-zero).
 
-This starts:
+---
 
-- MongoDB  
-- Vulnerable backend server  
-- Fixed backend server  
-- Frontend application  
+## Ports & URLs
+
+| Service | Port | URL |
+|---------|------|-----|
+| **MongoDB** | 27017 | `mongodb://localhost:27017` |
+| **Vulnerable backend** | 5000 | http://localhost:5000 |
+| **Fixed backend** | 5001 | http://localhost:5001 |
+| **Frontend** (if using `npx serve`) | 3000 | http://localhost:3000 |
+
+The exploit scripts default to the **vulnerable** server (port 5000). To target the fixed server from a script that supports it, pass `fixed` as an argument (e.g. `python attack_regex.py fixed`).
 
 ---
 
