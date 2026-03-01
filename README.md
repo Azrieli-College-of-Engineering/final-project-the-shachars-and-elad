@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Advanced Web Security Lab
 
 **Intentionally Vulnerable & Secured Web Application**
