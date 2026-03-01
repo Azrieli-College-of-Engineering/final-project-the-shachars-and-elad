@@ -2,37 +2,42 @@
 
 **Intentionally Vulnerable & Secured Web Application**
 
-An academic security lab that demonstrates real-world web application vulnerabilities, their exploitation, and secure implementations side by side.
+An academic security lab designed to demonstrate real-world web application vulnerabilities, their exploitation in practice, and corresponding secure implementations.
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
+- [Project Description](#project-description)
 - [Project Structure](#project-structure)
-- [Tech Stack](#tech-stack)
-- [Quick Start](#quick-start)
+- [Environment & Technologies](#environment--technologies)
+- [Running the Project](#running-the-project)
 - [The Two Servers](#the-two-servers)
 - [Vulnerabilities & POC Scripts](#vulnerabilities--poc-scripts)
-- [Fixed Server – Security Measures](#fixed-server--security-measures)
+- [Running the Attacks (POC)](#running-the-attacks-poc)
+- [Fixed Server – Security Improvements](#fixed-server--security-improvements)
 - [Ethical Disclaimer](#ethical-disclaimer)
+- [Summary](#summary)
 - [References](#references)
 
 ---
 
-## Overview
+## Project Description
 
-This project provides:
+The system includes two separate backend servers:
 
 | Component | Description |
 |-----------|-------------|
-| **Vulnerable Server** | Intentionally insecure backend to demonstrate attacks |
-| **Fixed Server** | Hardened backend with proper security controls |
-| **Frontend** | Web UI for both environments |
-| **Exploits (POC)** | Automated Python scripts that demonstrate each vulnerability |
-| **Docker** | Reproducible environment (MongoDB + both servers + frontend) |
+| **Vulnerable Server** | Intentionally insecure — used to demonstrate attacks |
+| **Fixed Server** | Hardened version implementing proper security controls |
 
-> **Warning:** All vulnerabilities are intentional and for **educational use only**. Do not deploy in production or test on systems without authorization.
+In addition, the project includes:
+
+- A **frontend** web application  
+- **Automated attack scripts (POC)**  
+- **Docker-based** environment for reproducible execution  
+
+> ⚠️ **Warning:** All vulnerabilities were intentionally implemented for **educational purposes only**. Do not deploy in production or test on systems without authorization.
 
 ---
 
@@ -40,49 +45,55 @@ This project provides:
 
 ```
 advanced-sec-lab/
+│
 ├── docker-compose.yml
 ├── package.json
 ├── .env
-├── frontend/                    # Web UI
-├── vulnerable/                  # Intentionally vulnerable server
+├── frontend/                # Web UI
+│
+├── vulnerable/              # Intentionally vulnerable server
 │   ├── server.js
 │   └── routes/
-├── fixed/                       # Secured server implementation
+│
+├── fixed/                   # Secured server implementation
 │   ├── server.js
 │   └── routes/
-└── exploits/                    # Attack scripts (POC)
-    ├── attack_regex.py
-    ├── attack_time.py
-    ├── attack_mass_assignment.py
-    ├── attack_account_takeover.py
-    └── attack_race_condition.py
+│
+├── exploits/                # Attack scripts (POC)
+│   ├── attack_regex.py
+│   ├── attack_time.py
+│   ├── attack_mass_assignment.py
+│   ├── attack_account_takeover.py
+│   └── attack_race_condition.py
+│
+└── .env
 ```
 
 ---
 
-## Tech Stack
+## Environment & Technologies
 
 | Layer | Technology |
-|-------|------------|
-| Backend | Node.js, Express |
-| Database | MongoDB |
-| Frontend | Web UI |
-| Containers | Docker, Docker Compose |
-| Attack automation | Python 3 |
-| Tools | VS Code, Postman, curl |
+|-------|-------------|
+| **Backend** | Node.js + Express |
+| **Database** | MongoDB |
+| **Frontend** | Web UI |
+| **Containerization** | Docker & Docker Compose |
+| **Attack automation** | Python scripts |
+| **Tools** | VS Code, Postman, curl |
 
 ---
 
-## Quick Start
+## Running the Project
 
 ### Prerequisites
 
-- **Docker** and **Docker Compose**
-- **Python 3** (for running exploit scripts)
+- **Docker** + **Docker Compose**
+- **Python 3** (for attack scripts)
 
 ### Start the environment
 
-From the project root (`advanced-sec-lab/`):
+From the project root directory:
 
 ```bash
 docker-compose up --build
@@ -99,74 +110,131 @@ This starts:
 
 ## The Two Servers
 
-### 1. Vulnerable Server (`vulnerable/`)
+### 1️⃣ Vulnerable Server (Intentionally Insecure)
 
-**Purpose:** Demonstrate common and advanced web security vulnerabilities in a realistic setting.
+**Location:** `vulnerable/`
 
-**Characteristics:**
+**Purpose:** Demonstrate common and advanced web security vulnerabilities in a realistic environment.
 
-- No input validation
-- No field-level authorization
-- Unsafe MongoDB queries
-- No concurrency protection
-- Unsafe AI integration
-- Business logic flaws
+**Key characteristics:**
 
-### 2. Fixed Server (`fixed/`)
+- No input validation  
+- No field-level authorization  
+- Unsafe MongoDB queries  
+- No concurrency protection  
+- Unsafe AI integration  
+- Business logic flaws  
 
-**Purpose:** Show how the same features can be implemented securely.
+### 2️⃣ Fixed Server (Secured Implementation)
 
-**Characteristics:**
+**Location:** `fixed/`
 
-- Functionally equivalent to the vulnerable version
-- Resistant to all demonstrated attacks (see [Vulnerabilities & POC Scripts](#vulnerabilities--poc-scripts) and [Fixed Server – Security Measures](#fixed-server--security-measures))
+**Purpose:** Demonstrate how the same functionality can be implemented securely.
+
+The fixed server is **functionally equivalent** but **resistant to all demonstrated attacks**. See [Fixed Server – Security Improvements](#fixed-server--security-improvements) below.
 
 ---
 
 ## Vulnerabilities & POC Scripts
 
-| # | Vulnerability | Affected Area | POC Script |
-|---|---------------|---------------|------------|
-| 1 | **NoSQL Injection** | Authentication (login) | `attack_regex.py`, `attack_time.py` |
-| 2 | **Mass Assignment** | User update API | `attack_mass_assignment.py` |
-| 3 | **Account Takeover** | Mass Assignment → Password reset | `attack_account_takeover.py` |
-| 4 | **Race Condition** | Critical operations (check-then-act) | `attack_race_condition.py` |
-| 5 | **AI Prompt Injection** | AI-driven sensitive actions | Via UI + backend |
+### 🔴 Vulnerability 1: NoSQL Injection
 
-### Vulnerability details
+| | |
+|---|------|
+| **Affected endpoint** | Authentication (login) |
+| **Description** | User input is passed directly into MongoDB queries without validation or type enforcement. |
+| **Exploitation** | Authentication bypass using query operators; password extraction via Regex Injection; blind password extraction via Time-Based Injection (`$where`). |
+| **POC scripts** | `exploits/attack_regex.py`, `exploits/attack_time.py` |
 
-#### 1. NoSQL Injection
+### 🔴 Vulnerability 2: Mass Assignment
 
-- **Description:** User input is passed directly into MongoDB queries without validation or type enforcement.
-- **Exploitation:** Auth bypass with query operators; password extraction via regex injection; blind extraction via time-based injection (`$where`).
-- **Scripts:** `exploits/attack_regex.py`, `exploits/attack_time.py`
+| | |
+|---|------|
+| **Affected endpoint** | User update API |
+| **Description** | `req.body` is copied directly into the database without field whitelisting or authorization checks. |
+| **Impact** | Unauthorized modification of sensitive fields (e.g. account balance); business logic abuse. |
+| **POC script** | `exploits/attack_mass_assignment.py` |
 
-#### 2. Mass Assignment
+### 🔴 Vulnerability 3: Account Takeover
 
-- **Description:** `req.body` is copied directly into the database without field whitelisting or authorization.
-- **Impact:** Unauthorized changes to sensitive fields (e.g. balance), business logic abuse.
-- **Script:** `exploits/attack_mass_assignment.py`
+| | |
+|---|------|
+| **Attack chain** | Mass Assignment → Password reset abuse |
+| **Description** | Internal password reset fields can be modified via Mass Assignment, allowing full account takeover. |
+| **POC script** | `exploits/attack_account_takeover.py` |
 
-#### 3. Account Takeover
+### 🔴 Vulnerability 4: Race Condition
 
-- **Description:** Internal password-reset fields are modifiable via Mass Assignment, leading to full account takeover.
-- **Script:** `exploits/attack_account_takeover.py`
+| | |
+|---|------|
+| **Description** | Critical operations follow a check-then-act pattern without atomicity or synchronization. |
+| **Impact** | Logic bypass; operations executed multiple times using parallel requests. |
+| **POC script** | `exploits/attack_race_condition.py` |
 
-#### 4. Race Condition
+### 🔴 Vulnerability 5: AI Prompt Injection
 
-- **Description:** Critical operations use check-then-act logic without atomicity or synchronization.
-- **Impact:** Logic bypass; same operation executed multiple times via parallel requests.
-- **Script:** `exploits/attack_race_condition.py`
+| | |
+|---|------|
+| **Description** | User-controlled input is processed by an AI component whose output is trusted for executing sensitive actions. |
+| **Impact** | Unauthorized privileged operations; abuse of AI as a high-privilege intermediary. |
+| **Demonstration** | Via the application UI and backend logic. |
 
-#### 5. AI Prompt Injection
+---
 
-- **Description:** User-controlled input is sent to an AI component whose output is trusted for sensitive actions.
-- **Impact:** Unauthorized privileged operations; AI used as a high-privilege intermediary.
-- **Demonstration:** Via the application UI and backend logic.
-
-### Running the POC scripts
+## Running the Attacks (POC)
 
 From the `exploits/` directory (with the vulnerable server running):
 
 ```bash
 cd exploits
+python attack_regex.py
+python attack_time.py
+python attack_mass_assignment.py
+python attack_account_takeover.py
+python attack_race_condition.py
+```
+
+Each script demonstrates **real exploitation** against the running vulnerable server.
+
+---
+
+## Fixed Server – Security Improvements
+
+- Strict **server-side input validation**  
+- **Field-level whitelisting**  
+- Proper **authorization checks**  
+- **Secure password reset** mechanism  
+- **Atomic database operations** / race condition prevention  
+- **AI output validation**  
+- **Human-in-the-Loop** approval for sensitive actions  
+- Clear **separation** between advisory AI and execution logic  
+
+---
+
+## Ethical Disclaimer
+
+This project was developed **strictly for academic and educational purposes**.
+
+- **Do not** deploy this system in production.  
+- **Do not** test these techniques on real systems without authorization.  
+
+---
+
+## Summary
+
+This project demonstrates that:
+
+- Web vulnerabilities often stem from **architecture and business logic**, not only bad input.  
+- Modern applications introduce new attack surfaces such as **AI** and **concurrency**.  
+- Effective security requires **server-side enforcement** and **holistic design**.  
+
+---
+
+## References
+
+- [OWASP Top 10 Web Application Security Risks](https://owasp.org/www-project-top-ten/)
+- [OWASP NoSQL Injection](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_NoSQL_Injection) & [Mass Assignment](https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html)
+- [OWASP Top 10 for Large Language Model Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [MongoDB Official Documentation](https://www.mongodb.com/docs/)
+- [MITRE CWE-20 – Improper Input Validation](https://cwe.mitre.org/data/definitions/20.html)
+- [MITRE CWE-362 – Race Condition](https://cwe.mitre.org/data/definitions/362.html)
